@@ -1,3 +1,3 @@
 <?php
 $loader = require __DIR__.'/../vendor/autoload.php';
-$loader->add('Tufesa``', "src/");
+$loader->add('Tufesa', "src/");
