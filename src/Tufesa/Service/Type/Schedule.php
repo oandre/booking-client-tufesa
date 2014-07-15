@@ -25,9 +25,9 @@ class Schedule
     protected $service;
 
     /**
-     * @var Category
+     * @var Category[]
      */
-    protected $category;
+    protected $categories;
 
     /**
      * @param \DateTime $arrivalDateTime
@@ -46,19 +46,19 @@ class Schedule
     }
 
     /**
-     * @param \Tufesa\Service\Type\Category $category
+     * @param \Tufesa\Service\Type\Category[] $categories
      */
-    public function setCategory($category)
+    public function setCategories($categories)
     {
-        $this->category = $category;
+        $this->categories = $categories;
     }
 
     /**
-     * @return \Tufesa\Service\Type\Category
+     * @return \Tufesa\Service\Type\Category[]
      */
-    public function getCategory()
+    public function getCategories()
     {
-        return $this->category;
+        return $this->categories;
     }
 
     /**

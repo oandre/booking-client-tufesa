@@ -11,6 +11,77 @@ class ScheduleFactory
      */
     public static function create(array $schedule)
     {
-        return new Schedule();
+        self::verifyRequiredFields($schedule);
+
+        if (!is_int($schedule["_id"])) {
+            throw new \InvalidArgumentException("The id must be a number");
+        }
+
+        $departureDateTime = \DateTime::createFromFormat('Ymd H:i', $schedule["_departure_date"] . " " . $schedule["_departure_time"]);
+
+        if (!$departureDateTime) {
+            throw new \InvalidArgumentException("The departure date or time is invalid:" . $schedule["_departure_date"] . " " . $schedule["_departure_time"]);
+        }
+
+        $arrivalDateTime = \DateTime::createFromFormat('Ymd H:i', $schedule["_arrival_date"] . " " . $schedule["_arrival_time"]);
+
+        if (!$arrivalDateTime) {
+            throw new \InvalidArgumentException("The arrival date or time is invalid" . $schedule["_arrival_date"] . " " . $schedule["_arrival_time"]);
+        }
+
+        if (empty($schedule["_service"])) {
+            throw new \InvalidArgumentException("The service is required");
+        }
+
+        $newSchedule = new Schedule();
+        $newSchedule->setId($schedule["_id"]);
+        $newSchedule->setDepartureDateTime($departureDateTime);
+        $newSchedule->setArrivalDateTime($arrivalDateTime);
+        $newSchedule->setService($schedule["_service"]);
+
+        $categories = array();
+
+        foreach ($schedule["_category"] as $category) {
+            $categories[] = CategoryFactory::create($category);
+        }
+
+        $newSchedule->setCategories($categories);
+
+        return $newSchedule;
+    }
+
+    public static function verifyRequiredFields(array $schedule)
+    {
+        if (!isset($schedule["_id"])) {
+            throw new \Exception("The field _id is required");
+        }
+
+        if (!isset($schedule["_departure_date"])) {
+            throw new \Exception("The field _departure_date is required");
+        }
+
+        if (!isset($schedule["_departure_time"])) {
+            throw new \Exception("The field _departure_time is required");
+        }
+
+        if (!isset($schedule["_arrival_date"])) {
+            throw new \Exception("The field _arrival_date is required");
+        }
+
+        if (!isset($schedule["_arrival_time"])) {
+            throw new \Exception("The field _arrival_time is required");
+        }
+
+        if (!isset($schedule["_service"])) {
+            throw new \Exception("The field _service is required");
+        }
+
+        if (!isset($schedule["_category"])) {
+            throw new \Exception("The field _category is required");
+        }
+
+        if (count($schedule["_category"]) == 0) {
+            throw new \Exception("At least one category is required");
+        }
     }
 }
