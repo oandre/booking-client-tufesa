@@ -25,7 +25,7 @@ class ScheduleFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function test_valid_data_should_work()
     {
-        $schedule = [
+        $schedules = [[
             "_id" => 1234,
             "_departure_date" => "20140715",
             "_departure_time" => "15:00",
@@ -37,16 +37,19 @@ class ScheduleFactoryTest extends \PHPUnit_Framework_TestCase
                 "_value" => "VALUE",
                 "_remain" => 3
             ]]
-        ];
+        ]];
 
-        $newSchedule = ScheduleFactory::create($schedule);
-        $this->assertInstanceOf('Tufesa\Service\Type\Schedule', $newSchedule);
+        $schedulesCollection = ScheduleFactory::create($schedules);
+        $this->assertInstanceOf('Tufesa\Service\Type\Schedules', $schedulesCollection);
 
-        $this->assertTrue(is_array($newSchedule->getCategories()));
+        foreach ($schedulesCollection as $schedule) {
+            $this->assertInstanceOf('Tufesa\Service\Type\Schedule', $schedule);
+            $this->assertTrue(is_array($schedule->getCategories()));
 
-        if (is_array($newSchedule->getCategories())) {
-            foreach ($newSchedule->getCategories() as $category) {
-                $this->assertInstanceOf('Tufesa\Service\Type\Category', $category);
+            if (is_array($schedule->getCategories())) {
+                foreach ($schedule->getCategories() as $category) {
+                    $this->assertInstanceOf('Tufesa\Service\Type\Category', $category);
+                }
             }
         }
     }
@@ -63,7 +66,7 @@ class ScheduleFactoryTest extends \PHPUnit_Framework_TestCase
     public function invalidScheduleProvider()
     {
         return [
-            [[
+            [[[
                 "_id" => "INVALID ID",
                 "_departure_date" => "20140715",
                 "_departure_time" => "15:00",
@@ -75,8 +78,8 @@ class ScheduleFactoryTest extends \PHPUnit_Framework_TestCase
                     "_value" => "VALUE",
                     "_remain" => 3
                 ]]
-            ]],
-            [[
+            ]]],
+            [[[
                 "_id" => 1234,
                 "_departure_date" => "2014-07-15",
                 "_departure_time" => "15:00",
@@ -88,8 +91,8 @@ class ScheduleFactoryTest extends \PHPUnit_Framework_TestCase
                     "_value" => "VALUE",
                     "_remain" => 3
                 ]]
-            ]],
-            [[
+            ]]],
+            [[[
                 "_id" => 1234,
                 "_departure_date" => "20140715",
                 "_departure_time" => "1500",
@@ -101,8 +104,8 @@ class ScheduleFactoryTest extends \PHPUnit_Framework_TestCase
                     "_value" => "VALUE",
                     "_remain" => 3
                 ]]
-            ]],
-            [[
+            ]]],
+            [[[
                 "_id" => 1234,
                 "_departure_date" => "20140715",
                 "_departure_time" => "15:00",
@@ -114,8 +117,8 @@ class ScheduleFactoryTest extends \PHPUnit_Framework_TestCase
                     "_value" => "VALUE",
                     "_remain" => 3
                 ]]
-            ]],
-            [[
+            ]]],
+            [[[
                 "_id" => 1234,
                 "_departure_date" => "20140715",
                 "_departure_time" => "15:00",
@@ -127,8 +130,7 @@ class ScheduleFactoryTest extends \PHPUnit_Framework_TestCase
                     "_value" => "VALUE",
                     "_remain" => 3
                 ]]
-            ]]
+            ]]]
         ];
     }
-
 }

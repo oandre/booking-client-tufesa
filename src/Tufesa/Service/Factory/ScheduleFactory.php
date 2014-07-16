@@ -3,13 +3,29 @@
 namespace Tufesa\Service\Factory;
 
 use Tufesa\Service\Type\Schedule;
+use Tufesa\Service\Type\Schedules;
 
 class ScheduleFactory
 {
     /**
+     * @param array $schedules
+     * @return \Tufesa\Service\Type\Schedules
+     */
+    public static function create(array $schedules)
+    {
+        $schedulesCollection = new Schedules();
+
+        foreach ($schedules as $schedule) {
+            $schedulesCollection->append(self::createSchedule($schedule));
+        }
+
+        return $schedulesCollection;
+    }
+
+    /**
      * @return \Tufesa\Service\Type\Schedule
      */
-    public static function create(array $schedule)
+    public static function createSchedule(array $schedule)
     {
         self::verifyRequiredFields($schedule);
 
@@ -17,16 +33,28 @@ class ScheduleFactory
             throw new \InvalidArgumentException("The id must be a number");
         }
 
-        $departureDateTime = \DateTime::createFromFormat('Ymd H:i', $schedule["_departure_date"] . " " . $schedule["_departure_time"]);
+        $departureDateTime = \DateTime::createFromFormat(
+            'Ymd H:i',
+            $schedule["_departure_date"] . " " . $schedule["_departure_time"]
+        );
 
         if (!$departureDateTime) {
-            throw new \InvalidArgumentException("The departure date or time is invalid:" . $schedule["_departure_date"] . " " . $schedule["_departure_time"]);
+            $message = "The departure date or time is invalid: ";
+            $message .= $schedule["_departure_date"] . " " . $schedule["_departure_time"];
+
+            throw new \InvalidArgumentException($message);
         }
 
-        $arrivalDateTime = \DateTime::createFromFormat('Ymd H:i', $schedule["_arrival_date"] . " " . $schedule["_arrival_time"]);
+        $arrivalDateTime = \DateTime::createFromFormat(
+            'Ymd H:i',
+            $schedule["_arrival_date"] . " " . $schedule["_arrival_time"]
+        );
 
         if (!$arrivalDateTime) {
-            throw new \InvalidArgumentException("The arrival date or time is invalid" . $schedule["_arrival_date"] . " " . $schedule["_arrival_time"]);
+            $message = "The arrival date or time is invalid: ";
+            $message .= $schedule["_arrival_date"] . " " . $schedule["_arrival_time"];
+
+            throw new \InvalidArgumentException($message);
         }
 
         if (empty($schedule["_service"])) {
