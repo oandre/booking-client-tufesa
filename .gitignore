@@ -1,7 +1,4 @@
 vendor/
 .idea/
-<<<<<<< HEAD
-=======
 code-coverage/
->>>>>>> bbbed92f790510af8697ab183caa55bc50a6e3b1
 .DS_Store
