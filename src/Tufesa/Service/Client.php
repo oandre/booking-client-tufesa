@@ -17,8 +17,30 @@ class Client
          $this->guzzleClient = $client;
     }
 
+    public function getDestinations($from) {
+        $params = array(
+            "from" => $from
+        );
+
+        $request = $this->guzzleClient->get("destinations?" . http_build_query($params));
+        $response = $request->send();
+        $resource = $response->json();
+
+        if($resource["_Response"]["resultField"]["_id"] != "00") {
+            throw new \Exception($resource["_Response"]["resultField"]["message"]);
+        }
+
+        $places = array();
+
+        foreach($resource["_Response"]["dataField"][0]["_point"] as $place) {
+            $places[] = PlaceFactory::create($place);
+        }
+
+        return $places;
+    }
+
     public function getOrigins() {
-        $request = $this->guzzleClient->get("origins");
+        $request = $this->guzzleClient->get("origins?");
         $response = $request->send();
         $resource = $response->json();
 
