@@ -51,6 +51,10 @@ class CategoryFactoryTest extends \PHPUnit_Framework_TestCase
             "_remain" => 3
         ];
 
-        $this->assertInstanceOf('Tufesa\Service\Type\Category', CategoryFactory::create($category));
+        $newCategory = CategoryFactory::create($category);
+        $this->assertInstanceOf('Tufesa\Service\Type\Category', $newCategory);
+        $this->assertEquals($category["_id"], $newCategory->getId());
+        $this->assertEquals($category["_value"], $newCategory->getValue());
+        $this->assertEquals($category["_remain"], $newCategory->getRemain());
     }
 }

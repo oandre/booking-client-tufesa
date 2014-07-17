@@ -81,35 +81,35 @@ class ScheduleFactory
     public static function verifyRequiredFields(array $schedule)
     {
         if (!isset($schedule["_id"])) {
-            throw new \Exception("The field _id is required");
+            throw new \InvalidArgumentException("The field _id is required");
         }
 
         if (!isset($schedule["_departure_date"])) {
-            throw new \Exception("The field _departure_date is required");
+            throw new \InvalidArgumentException("The field _departure_date is required");
         }
 
         if (!isset($schedule["_departure_time"])) {
-            throw new \Exception("The field _departure_time is required");
+            throw new \InvalidArgumentException("The field _departure_time is required");
         }
 
         if (!isset($schedule["_arrival_date"])) {
-            throw new \Exception("The field _arrival_date is required");
+            throw new \InvalidArgumentException("The field _arrival_date is required");
         }
 
         if (!isset($schedule["_arrival_time"])) {
-            throw new \Exception("The field _arrival_time is required");
+            throw new \InvalidArgumentException("The field _arrival_time is required");
         }
 
         if (!isset($schedule["_service"])) {
-            throw new \Exception("The field _service is required");
+            throw new \InvalidArgumentException("The field _service is required");
         }
 
         if (!isset($schedule["_category"])) {
-            throw new \Exception("The field _category is required");
+            throw new \InvalidArgumentException("The field _category is required");
         }
 
         if (count($schedule["_category"]) == 0) {
-            throw new \Exception("At least one category is required");
+            throw new \InvalidArgumentException("At least one category is required");
         }
     }
 }

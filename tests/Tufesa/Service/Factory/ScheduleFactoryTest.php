@@ -45,6 +45,21 @@ class ScheduleFactoryTest extends \PHPUnit_Framework_TestCase
         foreach ($schedulesCollection as $schedule) {
             $this->assertInstanceOf('Tufesa\Service\Type\Schedule', $schedule);
             $this->assertTrue(is_array($schedule->getCategories()));
+            $this->assertEquals($schedules[0]["_id"], $schedule->getId());
+            $this->assertEquals($schedules[0]["_service"], $schedule->getService());
+
+            $departureDateTime = \DateTime::createFromFormat(
+                'Ymd H:i',
+                $schedules[0]["_departure_date"] . " " . $schedules[0]["_departure_time"]
+            );
+
+            $arrivalDateTime = \DateTime::createFromFormat(
+                'Ymd H:i',
+                $schedules[0]["_arrival_date"] . " " . $schedules[0]["_arrival_time"]
+            );
+
+            $this->assertEquals($departureDateTime, $schedule->getDepartureDateTime());
+            $this->assertEquals($arrivalDateTime, $schedule->getArrivalDateTime());
 
             if (is_array($schedule->getCategories())) {
                 foreach ($schedule->getCategories() as $category) {
@@ -52,6 +67,132 @@ class ScheduleFactoryTest extends \PHPUnit_Framework_TestCase
                 }
             }
         }
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function test_verify_required_fields_should_raise_an_exception_if_the_id_is_not_set()
+    {
+        $schedule = [
+            "_departure_date" => "20140715",
+            "_departure_time" => "15:00",
+            "_arrival_date" => "20140715",
+            "_arrival_time" => "18:00",
+            "_service" => "PRIMERA",
+            "_category" => [[
+                "_id" => 1234,
+                "_value" => "VALUE",
+                "_remain" => 3
+            ]]
+        ];
+
+        ScheduleFactory::verifyRequiredFields($schedule);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function test_verify_required_fields_should_raise_an_exception_if_the_departure_date_is_not_set()
+    {
+        $schedule = [
+            "_id" => 1234
+        ];
+
+        ScheduleFactory::verifyRequiredFields($schedule);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function test_verify_required_fields_should_raise_an_exception_if_the_departure_time_is_not_set()
+    {
+        $schedule = [
+            "_id" => 1234,
+            "_departure_date" => "20140715",
+        ];
+
+        ScheduleFactory::verifyRequiredFields($schedule);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function test_verify_required_fields_should_raise_an_exception_if_the_arrival_date_is_not_set()
+    {
+        $schedule = [
+            "_id" => 1234,
+            "_departure_date" => "20140715",
+            "_departure_time" => "15:00",
+        ];
+
+        ScheduleFactory::verifyRequiredFields($schedule);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function test_verify_required_fields_should_raise_an_exception_if_the_arrival_time_is_not_set()
+    {
+        $schedule = [
+            "_id" => 1234,
+            "_departure_date" => "20140715",
+            "_departure_time" => "15:00",
+            "_arrival_date" => "20140715",
+        ];
+
+        ScheduleFactory::verifyRequiredFields($schedule);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function test_verify_required_fields_should_raise_an_exception_if_the_service_is_not_set()
+    {
+        $schedule = [
+            "_id" => 1234,
+            "_departure_date" => "20140715",
+            "_departure_time" => "15:00",
+            "_arrival_date" => "20140715",
+            "_arrival_time" => "18:00",
+        ];
+
+        ScheduleFactory::verifyRequiredFields($schedule);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function test_verify_required_fields_should_raise_an_exception_if_the_category_is_not_set()
+    {
+        $schedule = [
+            "_id" => 1234,
+            "_departure_date" => "20140715",
+            "_departure_time" => "15:00",
+            "_arrival_date" => "20140715",
+            "_arrival_time" => "18:00",
+            "_service" => "PRIMERA",
+        ];
+
+        ScheduleFactory::verifyRequiredFields($schedule);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function test_verify_required_fields_should_raise_an_exception_if_the_category_is_empty()
+    {
+        $schedule = [
+            "_id" => 1234,
+            "_departure_date" => "20140715",
+            "_departure_time" => "15:00",
+            "_arrival_date" => "20140715",
+            "_arrival_time" => "18:00",
+            "_service" => "PRIMERA",
+            "_category" => []
+        ];
+
+        ScheduleFactory::verifyRequiredFields($schedule);
     }
 
     /**
