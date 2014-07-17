@@ -28,6 +28,7 @@ class PlaceFactoryTest extends \PHPUnit_Framework_TestCase {
      */
     public function test_invalid_description_should_rise_and_exception() {
         $place = [
+            "idField" => "MEX",
             "descriptionField" => ""
         ];
 
@@ -49,7 +50,10 @@ class PlaceFactoryTest extends \PHPUnit_Framework_TestCase {
             "descriptionField" => "Cd. Obregon"
         ];
 
-        $this->assertInstanceOf('Tufesa\Service\Type\Place', PlaceFactory::create($place));
+        $newPlace = PlaceFactory::create($place);
+        $this->assertInstanceOf('Tufesa\Service\Type\Place', $newPlace);
+        $this->assertEquals($place["idField"], $newPlace->getId());
+        $this->assertEquals($place["descriptionField"], $newPlace->getDescription());
     }
 
 } 

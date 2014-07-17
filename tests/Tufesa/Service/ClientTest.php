@@ -7,9 +7,9 @@ use Guzzle\Http\Client as GuzzleClient;
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function test_place_factory_with_unexits_destinations() {
+    public function test_place_factory_with_unexitent_destinations() {
         $response = new \Guzzle\Http\Message\Response(200);
-        $response->setBody('{"_id":"1.0","_Response":{"_revAuth":null,"resultField":{"_id":"00","_message":"Consulta Exitosa"},"dataField":[{"_line":"TUFES","_point":[{"idField":"ACP","descriptionField":"Acaponeta"},{"idField":"AIT","descriptionField":"Aeropuerto Inter Tijuana"},{"idField":"AGP","descriptionField":"Agua Prieta"},{"idField":"BAK","descriptionField":"Bakersfield California"},{"idField":"BLL","descriptionField":"Bullhead City"},{"idField":"CAB","descriptionField":"Caborca"},{"idField":"CAN","descriptionField":"Cananea"},{"idField":"OBR","descriptionField":"Cd. Obregon"},{"idField":"COL","descriptionField":"Colton"},{"idField":"CUL","descriptionField":"Culiacan"},{"idField":"ROS","descriptionField":"El Rosario"},{"idField":"EMP","descriptionField":"Empalme"},{"idField":"EPZ","descriptionField":"Esperanza"},{"idField":"FRE","descriptionField":"Fresno California"},{"idField":"GIL","descriptionField":"Gilroy California"},{"idField":"GDL","descriptionField":"Guadalajara"},{"idField":"GMH","descriptionField":"Guamuchil"},{"idField":"GVE","descriptionField":"Guasave"},{"idField":"GYM","descriptionField":"Guaymas"},{"idField":"HMO","descriptionField":"Hermosillo"},{"idField":"HMA","descriptionField":"Hermosillo Aeropuerto"},{"idField":"HPK","descriptionField":"Huntington Park"},{"idField":"IMU","descriptionField":"Imuris"},{"idField":"IDO","descriptionField":"Indio California"},{"idField":"IXT","descriptionField":"Ixtlan"},{"idField":"KNG","descriptionField":"Kingman Arizona"},{"idField":"VEG","descriptionField":"Las Vegas"},{"idField":"LAU","descriptionField":"Laughlin Nevada"},{"idField":"LAD","descriptionField":"Los Angeles Downtown"},{"idField":"LAN","descriptionField":"Los Angeles East"},{"idField":"LBN","descriptionField":"Los Baños California"},{"idField":"MOC","descriptionField":"Los Mochis"},{"idField":"MAG","descriptionField":"Magdalena"},{"idField":"MAZ","descriptionField":"Mazatlan"},{"idField":"MER","descriptionField":"Merced California"},{"idField":"MXL","descriptionField":"Mexicali"},{"idField":"NAV","descriptionField":"Navojoa"},{"idField":"NOG","descriptionField":"Nogales"},{"idField":"NAZ","descriptionField":"Nogales Arizona"},{"idField":"ONT","descriptionField":"Ontario"},{"idField":"PNA","descriptionField":"Peñas"},{"idField":"PHX","descriptionField":"Phoenix"},{"idField":"SJS","descriptionField":"San Jose Califonia"},{"idField":"SLR","descriptionField":"San Luis Rio Colorado"},{"idField":"SYS","descriptionField":"San Ysidro CA"},{"idField":"STA","descriptionField":"Santa Ana"},{"idField":"STN","descriptionField":"Santa Ana Norte"},{"idField":"SNY","descriptionField":"Sonoyta"},{"idField":"TEP","descriptionField":"Tepic"},{"idField":"TIJ","descriptionField":"Tijuana Buenavista"},{"idField":"TJI","descriptionField":"Tijuana Insurgentes"},{"idField":"TUC","descriptionField":"Tucson"},{"idField":"TUL","descriptionField":"Tulare"},{"idField":"VIC","descriptionField":"Vicam"},{"idField":"VUN","descriptionField":"Villa Union"},{"idField":"ZAP","descriptionField":"Zapopan"}],"_schedules":null,"_row":null,"_total_trans":null,"_auth":null,"_ticket":null}]},"_Request":null}');
+        $response->setBody('{"_id":"1.0","_Response":{"_revAuth":null,"resultField":{"_id":"00","_message":"Consulta Exitosa"},"dataField":[{"_line":"TUFES","_point":[{"idField":"ACP","descriptionField":"Acaponeta"}],"_schedules":null,"_row":null,"_total_trans":null,"_auth":null,"_ticket":null}]},"_Request":null}');
 
         $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
         $plugin->addResponse($response);
@@ -22,12 +22,12 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $places = $tufesaClient->getDestinations($from);
 
-        $this->assertTrue(is_array($places));
+        $this->assertInstanceOf('Tufesa\Service\Type\Places', $places);
     }
 
-    public function test_place_factory_return_a_instance_of_destinations() {
+    public function test_place_factory_should_return_an_instance_of_places() {
         $response = new \Guzzle\Http\Message\Response(200);
-        $response->setBody('{"_id":"1.0","_Response":{"_revAuth":null,"resultField":{"_id":"00","_message":"Consulta Exitosa"},"dataField":[{"_line":"TUFES","_point":[{"idField":"ACP","descriptionField":"Acaponeta"},{"idField":"AIT","descriptionField":"Aeropuerto Inter Tijuana"},{"idField":"AGP","descriptionField":"Agua Prieta"},{"idField":"BAK","descriptionField":"Bakersfield California"},{"idField":"BLL","descriptionField":"Bullhead City"},{"idField":"CAB","descriptionField":"Caborca"},{"idField":"CAN","descriptionField":"Cananea"},{"idField":"OBR","descriptionField":"Cd. Obregon"},{"idField":"COL","descriptionField":"Colton"},{"idField":"CUL","descriptionField":"Culiacan"},{"idField":"ROS","descriptionField":"El Rosario"},{"idField":"EMP","descriptionField":"Empalme"},{"idField":"EPZ","descriptionField":"Esperanza"},{"idField":"FRE","descriptionField":"Fresno California"},{"idField":"GIL","descriptionField":"Gilroy California"},{"idField":"GDL","descriptionField":"Guadalajara"},{"idField":"GMH","descriptionField":"Guamuchil"},{"idField":"GVE","descriptionField":"Guasave"},{"idField":"GYM","descriptionField":"Guaymas"},{"idField":"HMO","descriptionField":"Hermosillo"},{"idField":"HMA","descriptionField":"Hermosillo Aeropuerto"},{"idField":"HPK","descriptionField":"Huntington Park"},{"idField":"IMU","descriptionField":"Imuris"},{"idField":"IDO","descriptionField":"Indio California"},{"idField":"IXT","descriptionField":"Ixtlan"},{"idField":"KNG","descriptionField":"Kingman Arizona"},{"idField":"VEG","descriptionField":"Las Vegas"},{"idField":"LAU","descriptionField":"Laughlin Nevada"},{"idField":"LAD","descriptionField":"Los Angeles Downtown"},{"idField":"LAN","descriptionField":"Los Angeles East"},{"idField":"LBN","descriptionField":"Los Baños California"},{"idField":"MOC","descriptionField":"Los Mochis"},{"idField":"MAG","descriptionField":"Magdalena"},{"idField":"MAZ","descriptionField":"Mazatlan"},{"idField":"MER","descriptionField":"Merced California"},{"idField":"MXL","descriptionField":"Mexicali"},{"idField":"NAV","descriptionField":"Navojoa"},{"idField":"NOG","descriptionField":"Nogales"},{"idField":"NAZ","descriptionField":"Nogales Arizona"},{"idField":"ONT","descriptionField":"Ontario"},{"idField":"PNA","descriptionField":"Peñas"},{"idField":"PHX","descriptionField":"Phoenix"},{"idField":"SJS","descriptionField":"San Jose Califonia"},{"idField":"SLR","descriptionField":"San Luis Rio Colorado"},{"idField":"SYS","descriptionField":"San Ysidro CA"},{"idField":"STA","descriptionField":"Santa Ana"},{"idField":"STN","descriptionField":"Santa Ana Norte"},{"idField":"SNY","descriptionField":"Sonoyta"},{"idField":"TEP","descriptionField":"Tepic"},{"idField":"TIJ","descriptionField":"Tijuana Buenavista"},{"idField":"TJI","descriptionField":"Tijuana Insurgentes"},{"idField":"TUC","descriptionField":"Tucson"},{"idField":"TUL","descriptionField":"Tulare"},{"idField":"VIC","descriptionField":"Vicam"},{"idField":"VUN","descriptionField":"Villa Union"},{"idField":"ZAP","descriptionField":"Zapopan"}],"_schedules":null,"_row":null,"_total_trans":null,"_auth":null,"_ticket":null}]},"_Request":null}');
+        $response->setBody('{"_id":"1.0","_Response":{"_revAuth":null,"resultField":{"_id":"00","_message":"Consulta Exitosa"},"dataField":[{"_line":"TUFES","_point":[{"idField":"ACP","descriptionField":"Acaponeta"}],"_schedules":null,"_row":null,"_total_trans":null,"_auth":null,"_ticket":null}]},"_Request":null}');
 
         $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
         $plugin->addResponse($response);
@@ -40,10 +40,31 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $places = $tufesaClient->getDestinations($from);
 
-        $this->assertTrue(is_array($places));
+        $this->assertInstanceOf('Tufesa\Service\Type\Places', $places);
     }
 
-    public function test_place_factory_return_a_instance_of_origin() {
+    /**
+     * @expectedException Tufesa\Service\Exceptions\ResponseException
+     */
+    public function test_problem_with_tufesa_get_destinations_should_raise_an_exception()
+    {
+        $response = new \Guzzle\Http\Message\Response(200);
+        $response->setBody('{"_id": "1.0", "_Response": { "_revAuth": null, "resultField": { "_id": "666", "_message": "SOME DUMMY MESSAGE HERE" } } }');
+
+        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
+        $plugin->addResponse($response);
+        $guzzuleClient = new GuzzleClient();
+        $guzzuleClient->addSubscriber($plugin);
+
+        $tufesaClient = new Client($guzzuleClient);
+
+        $from = "GDL";
+
+        $places = $tufesaClient->getDestinations($from);
+
+    }
+
+    public function test_get_origins_should_return_an_instance_of_places() {
         $response = new \Guzzle\Http\Message\Response(200);
         $response->setBody('{"_id":"1.0","_Response":{"_revAuth":null,"resultField":{"_id":"00","_message":"Consulta Exitosa"},"dataField":[{"_line":"TUFES","_point":[{"idField":"ACP","descriptionField":"Acaponeta"},{"idField":"AIT","descriptionField":"Aeropuerto Inter Tijuana"},{"idField":"AGP","descriptionField":"Agua Prieta"},{"idField":"BAK","descriptionField":"Bakersfield California"},{"idField":"BLL","descriptionField":"Bullhead City"},{"idField":"CAB","descriptionField":"Caborca"},{"idField":"CAN","descriptionField":"Cananea"},{"idField":"OBR","descriptionField":"Cd. Obregon"},{"idField":"COL","descriptionField":"Colton"},{"idField":"CUL","descriptionField":"Culiacan"},{"idField":"ROS","descriptionField":"El Rosario"},{"idField":"EMP","descriptionField":"Empalme"},{"idField":"EPZ","descriptionField":"Esperanza"},{"idField":"FRE","descriptionField":"Fresno California"},{"idField":"GIL","descriptionField":"Gilroy California"},{"idField":"GDL","descriptionField":"Guadalajara"},{"idField":"GMH","descriptionField":"Guamuchil"},{"idField":"GVE","descriptionField":"Guasave"},{"idField":"GYM","descriptionField":"Guaymas"},{"idField":"HMO","descriptionField":"Hermosillo"},{"idField":"HMA","descriptionField":"Hermosillo Aeropuerto"},{"idField":"HPK","descriptionField":"Huntington Park"},{"idField":"IMU","descriptionField":"Imuris"},{"idField":"IDO","descriptionField":"Indio California"},{"idField":"IXT","descriptionField":"Ixtlan"},{"idField":"KNG","descriptionField":"Kingman Arizona"},{"idField":"VEG","descriptionField":"Las Vegas"},{"idField":"LAU","descriptionField":"Laughlin Nevada"},{"idField":"LAD","descriptionField":"Los Angeles Downtown"},{"idField":"LAN","descriptionField":"Los Angeles East"},{"idField":"LBN","descriptionField":"Los Baños California"},{"idField":"MOC","descriptionField":"Los Mochis"},{"idField":"MAG","descriptionField":"Magdalena"},{"idField":"MAZ","descriptionField":"Mazatlan"},{"idField":"MER","descriptionField":"Merced California"},{"idField":"MXL","descriptionField":"Mexicali"},{"idField":"NAV","descriptionField":"Navojoa"},{"idField":"NOG","descriptionField":"Nogales"},{"idField":"NAZ","descriptionField":"Nogales Arizona"},{"idField":"ONT","descriptionField":"Ontario"},{"idField":"PNA","descriptionField":"Peñas"},{"idField":"PHX","descriptionField":"Phoenix"},{"idField":"SJS","descriptionField":"San Jose Califonia"},{"idField":"SLR","descriptionField":"San Luis Rio Colorado"},{"idField":"SYS","descriptionField":"San Ysidro CA"},{"idField":"STA","descriptionField":"Santa Ana"},{"idField":"STN","descriptionField":"Santa Ana Norte"},{"idField":"SNY","descriptionField":"Sonoyta"},{"idField":"TEP","descriptionField":"Tepic"},{"idField":"TIJ","descriptionField":"Tijuana Buenavista"},{"idField":"TJI","descriptionField":"Tijuana Insurgentes"},{"idField":"TUC","descriptionField":"Tucson"},{"idField":"TUL","descriptionField":"Tulare"},{"idField":"VIC","descriptionField":"Vicam"},{"idField":"VUN","descriptionField":"Villa Union"},{"idField":"ZAP","descriptionField":"Zapopan"}],"_schedules":null,"_row":null,"_total_trans":null,"_auth":null,"_ticket":null}]},"_Request":null}');
 
@@ -57,6 +78,24 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $places = $tufesaClient->getOrigins();
 
         $this->assertTrue(is_array($places));
+    }
+
+    /**
+     * @expectedException Tufesa\Service\Exceptions\ResponseException
+     */
+    public function test_problem_with_tufesa_get_origins_should_raise_an_exception()
+    {
+        $response = new \Guzzle\Http\Message\Response(200);
+        $response->setBody('{"_id": "1.0", "_Response": { "_revAuth": null, "resultField": { "_id": "666", "_message": "SOME DUMMY MESSAGE HERE" } } }');
+
+        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
+        $plugin->addResponse($response);
+        $guzzuleClient = new GuzzleClient();
+        $guzzuleClient->addSubscriber($plugin);
+
+        $tufesaClient = new Client($guzzuleClient);
+
+        $places = $tufesaClient->getOrigins();
     }
 
     public function test_schedule_factory_return_an_instance_of_schedule()
@@ -83,7 +122,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException Tufesa\Service\Exceptions\ResponseException
      */
     public function test_problem_with_tufesa_get_schedules_should_raise_an_exception()
     {
@@ -125,7 +164,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException Tufesa\Service\Exceptions\ResponseException
      */
     public function test_problem_with_tufesa_get_seat_map_should_raise_an_exception()
     {

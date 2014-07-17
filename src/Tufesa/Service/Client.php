@@ -2,10 +2,12 @@
 
 namespace Tufesa\Service;
 
+use Tufesa\Service\Exceptions\ResponseException;
 use Tufesa\Service\Factory\PlaceFactory;
 use Tufesa\Service\Factory\ScheduleFactory;
 use Tufesa\Service\Factory\SeatMapFactory;
 use Guzzle\Http\Client as GuzzleClient;
+use Tufesa\Service\Type\Places;
 use Tufesa\Service\Type\SeatMap;
 
 class Client
@@ -27,13 +29,13 @@ class Client
         $resource = $response->json();
 
         if($resource["_Response"]["resultField"]["_id"] != "00") {
-            throw new \Exception($resource["_Response"]["resultField"]["message"]);
+            throw new ResponseException($resource["_Response"]["resultField"]["_message"]);
         }
 
-        $places = array();
+        $places = new Places();
 
-        foreach($resource["_Response"]["dataField"][0]["_point"] as $place) {
-            $places[] = PlaceFactory::create($place);
+        foreach ($resource["_Response"]["dataField"][0]["_point"] as $place) {
+            $places->append(PlaceFactory::create($place));
         }
 
         return $places;
@@ -45,7 +47,7 @@ class Client
         $resource = $response->json();
 
         if($resource["_Response"]["resultField"]["_id"] != "00") {
-            throw new \Exception($resource["_Response"]["resultField"]["message"]);
+            throw new ResponseException($resource["_Response"]["resultField"]["_message"]);
         }
 
         $places = array();
@@ -70,7 +72,7 @@ class Client
         $resource = $response->json();
 
         if ($resource["_Response"]["resultField"]["_id"] != "00") {
-            throw new \Exception($resource["_Response"]["resultField"]["_message"]);
+            throw new ResponseException($resource["_Response"]["resultField"]["_message"]);
         }
 
         return ScheduleFactory::create($resource["_Response"]["dataField"][0]["_schedules"]);
@@ -89,7 +91,7 @@ class Client
         $resource = $response->json();
 
         if ($resource["_Response"]["resultField"]["_id"] != "00") {
-            throw new \Exception($resource["_Response"]["resultField"]["_message"]);
+            throw new ResponseException($resource["_Response"]["resultField"]["_message"]);
         }
 
         $rows = $resource["_Response"]["dataField"][0]["_row"];

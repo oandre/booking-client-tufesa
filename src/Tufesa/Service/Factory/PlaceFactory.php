@@ -7,24 +7,24 @@ use Tufesa\Service\Type\Place;
 
 class PlaceFactory {
 
-    public static function create(array $placeArray) {
+    public static function create(array $place) {
 
-        if(empty($placeArray)) {
+        if(empty($place)) {
             throw new \InvalidArgumentException("Required value");
         }
 
-        if(empty($placeArray["idField"])) {
+        if(empty($place["idField"])) {
             throw new \InvalidArgumentException("Id value is required");
         }
 
-        if(empty($placeArray["descriptionField"])) {
+        if(empty($place["descriptionField"])) {
             throw new \InvalidArgumentException("Description value is required");
         }
 
-        $place = new Place();
-        $place->setDescription($placeArray["descriptionField"]);
-        $place->setId($placeArray["idField"]);
+        $newPlace = new Place();
+        $newPlace->setDescription($place["descriptionField"]);
+        $newPlace->setId($place["idField"]);
 
-        return $place;
+        return $newPlace;
     }
 } 
