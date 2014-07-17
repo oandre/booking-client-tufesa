@@ -2,6 +2,7 @@
 
 namespace Tufesa\Service;
 
+use Tufesa\Service\Factory\PlaceFactory;
 use Tufesa\Service\Factory\ScheduleFactory;
 use Tufesa\Service\Factory\SeatMapFactory;
 use Guzzle\Http\Client as GuzzleClient;
@@ -14,6 +15,24 @@ class Client
     public function __construct(GuzzleClient $client)
     {
          $this->guzzleClient = $client;
+    }
+
+    public function getOrigins() {
+        $request = $this->guzzleClient->get("origins");
+        $response = $request->send();
+        $resource = $response->json();
+
+        if($resource["_Response"]["resultField"]["_id"] != "00") {
+            throw new \Exception($resource["_Response"]["resultField"]["message"]);
+        }
+
+        $places = array();
+
+        foreach($resource["_Response"]["dataField"][0]["_point"] as $place) {
+            $places[] = PlaceFactory::create($place);
+        }
+
+        return $places;
     }
 
     public function getSchedules($from, $to, \DateTime $date)
