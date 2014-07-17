@@ -29,10 +29,55 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @expectedException Exception
+     */
+    public function test_problem_with_tufesa_get_schedules_should_raise_an_exception()
+    {
+        $response = new \Guzzle\Http\Message\Response(200);
+        $response->setBody('{"_id": "1.0", "_Response": { "_revAuth": null, "resultField": { "_id": "666", "_message": "SOME DUMMY MESSAGE HERE" } } }');
+
+        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
+        $plugin->addResponse($response);
+        $guzzleClient = new GuzzleClient();
+        $guzzleClient->addSubscriber($plugin);
+
+        $tufesaClient = new Client($guzzleClient);
+
+        $from = "GDL";
+        $to = "OBR";
+        $date = new \DateTime("tomorrow");
+
+        $schedules = $tufesaClient->getSchedules($from, $to, $date);
+    }
+
     public function test_seat_map_factory_should_return_an_instance_of_seat_map()
     {
         $response = new \Guzzle\Http\Message\Response(200);
         $response->setBody('{"_id":"1.0","_Response":{"_revAuth":null,"resultField":{"_id":"00","_message":"Mensaje Exitoso"},"dataField":[{"_line":"TUFES","_point":null,"_schedules":null,"_row":[{"_seat":[{"_id":4,"_available":true},{"_id":8,"_available":true},{"_id":12,"_available":true},{"_id":16,"_available":true},{"_id":20,"_available":true},{"_id":24,"_available":true},{"_id":28,"_available":true},{"_id":32,"_available":true},{"_id":36,"_available":true},{"_id":40,"_available":true}]},{"_seat":[{"_id":3,"_available":true},{"_id":7,"_available":true},{"_id":11,"_available":true},{"_id":15,"_available":true},{"_id":19,"_available":true},{"_id":23,"_available":true},{"_id":27,"_available":true},{"_id":31,"_available":true},{"_id":35,"_available":true},{"_id":39,"_available":true}]},{"_seat":[{"_id":2,"_available":true},{"_id":6,"_available":true},{"_id":10,"_available":true},{"_id":14,"_available":true},{"_id":18,"_available":true},{"_id":22,"_available":true},{"_id":26,"_available":true},{"_id":30,"_available":true},{"_id":34,"_available":true},{"_id":38,"_available":true}]},{"_seat":[{"_id":1,"_available":true},{"_id":5,"_available":true},{"_id":9,"_available":true},{"_id":13,"_available":true},{"_id":17,"_available":true},{"_id":21,"_available":true},{"_id":25,"_available":true},{"_id":29,"_available":true},{"_id":33,"_available":true},{"_id":37,"_available":true}]}],"_total_trans":null,"_auth":null,"_ticket":null}]},"_Request":null}');
+
+        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
+        $plugin->addResponse($response);
+        $guzzleClient = new GuzzleClient();
+        $guzzleClient->addSubscriber($plugin);
+
+        $tufesaClient = new Client($guzzleClient);
+
+        $from = "GDL";
+        $to = "OBR";
+        $schedule = 866926;
+
+        $seatMap = $tufesaClient->getSeatMap($from, $to, $schedule);
+        $this->assertInstanceOf('Tufesa\Service\Type\SeatMap', $seatMap);
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function test_problem_with_tufesa_get_seat_map_should_raise_an_exception()
+    {
+        $response = new \Guzzle\Http\Message\Response(200);
+        $response->setBody('{"_id": "1.0", "_Response": { "_revAuth": null, "resultField": { "_id": "666", "_message": "SOME DUMMY MESSAGE HERE" }}}');
 
         $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
         $plugin->addResponse($response);

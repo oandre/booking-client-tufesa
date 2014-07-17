@@ -16,11 +16,6 @@ class Client
          $this->guzzleClient = $client;
     }
 
-    public function getGuzzleClient()
-    {
-        return $this->guzzleClient;
-    }
-
     public function getSchedules($from, $to, \DateTime $date)
     {
         $params = [

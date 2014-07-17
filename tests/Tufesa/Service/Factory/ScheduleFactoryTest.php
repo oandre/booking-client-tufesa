@@ -130,6 +130,19 @@ class ScheduleFactoryTest extends \PHPUnit_Framework_TestCase
                     "_value" => "VALUE",
                     "_remain" => 3
                 ]]
+            ]]],
+            [[[
+                "_id" => 1234,
+                "_departure_date" => "20140715",
+                "_departure_time" => "15:00",
+                "_arrival_date" => "20140715",
+                "_arrival_time" => "18:00",
+                "_service" => "",
+                "_category" => [[
+                    "_id" => 1234,
+                    "_value" => "VALUE",
+                    "_remain" => 3
+                ]]
             ]]]
         ];
     }
