@@ -9,6 +9,75 @@ use Tufesa\Service\Type\BuyRequest;
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
 
+    public function test_reserve_ticket_should_work_fine() {
+        $response = new \Guzzle\Http\Message\Response(200);
+        $response->setBody('{"_id":"1.0","_Response":{"_revAuth":"983893727","resultField":{"_id":"00","_message":"Reversa Exitosa"},"dataField":null},"_Request":null}');
+
+        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
+        $plugin->addResponse($response);
+        $guzzuleClient = new GuzzleClient();
+        $guzzuleClient->addSubscriber($plugin);
+
+        $tufesaClient = new Client($guzzuleClient);
+
+        $folio = 829;
+        $tufesaClient->reverseTickets($folio);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function test_reserve_ticket_invalid_folio_should_rise_exception() {
+        $response = new \Guzzle\Http\Message\Response(200);
+        $response->setBody('{"Message":"La solicitud no es válida."}');
+
+        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
+        $plugin->addResponse($response);
+        $guzzuleClient = new GuzzleClient();
+        $guzzuleClient->addSubscriber($plugin);
+
+        $tufesaClient = new Client($guzzuleClient);
+
+        $folio = "JSU";
+        $tufesaClient->reverseTickets($folio);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function test_reserve_ticket_no_folio_should_rise_exception() {
+        $response = new \Guzzle\Http\Message\Response(200);
+        $response->setBody('{"Message":"La solicitud no es válida."}');
+
+        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
+        $plugin->addResponse($response);
+        $guzzuleClient = new GuzzleClient();
+        $guzzuleClient->addSubscriber($plugin);
+
+        $tufesaClient = new Client($guzzuleClient);
+
+        $folio = null;
+        $tufesaClient->reverseTickets($folio);
+    }
+
+    /**
+     * @expectedException Tufesa\Service\Exceptions\ResponseException
+     */
+    public function test_reserve_ticket_should_send_unexisting_request() {
+        $response = new \Guzzle\Http\Message\Response(200);
+        $response->setBody('{"_id": "1.0","_Response": {"_revAuth": "0","resultField": {"_id": "12","_message": "Referencia Autorizacion Invalida"},"dataField": null},"_Request": null}');
+
+        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
+        $plugin->addResponse($response);
+        $guzzuleClient = new GuzzleClient();
+        $guzzuleClient->addSubscriber($plugin);
+
+        $tufesaClient = new Client($guzzuleClient);
+
+        $folio = 829;
+        $tufesaClient->reverseTickets($folio);
+    }
+
     public function test_place_factory_with_unexitent_destinations() {
         $response = new \Guzzle\Http\Message\Response(200);
         $response->setBody('{"_id":"1.0","_Response":{"_revAuth":null,"resultField":{"_id":"00","_message":"Consulta Exitosa"},"dataField":[{"_line":"TUFES","_point":[{"idField":"ACP","descriptionField":"Acaponeta"}],"_schedules":null,"_row":null,"_total_trans":null,"_auth":null,"_ticket":null}]},"_Request":null}');

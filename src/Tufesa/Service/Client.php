@@ -21,6 +21,32 @@ class Client
          $this->guzzleClient = $client;
     }
 
+    public function reverseTickets($folio) {
+
+        if(empty($folio)) {
+            throw new \InvalidArgumentException("Folio value is required");
+        }
+
+        if(!is_int($folio)) {
+            throw new \InvalidArgumentException("Folio needs to be a numeric");
+        }
+
+        $params = [
+            "folio" => $folio,
+        ];
+
+        $request = $this->guzzleClient->get("reverse?" . http_build_query($params));
+        $response = $request->send();
+        $resource = $response->json();
+
+
+        if($resource["_Response"]["resultField"]["_id"] != "00") {
+            throw new ResponseException($resource["_Response"]["resultField"]["_message"]);
+        } else {
+            return true;
+        }
+    }
+
     public function getDestinations($from) {
         $params = array(
             "from" => $from
