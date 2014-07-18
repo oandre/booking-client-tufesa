@@ -23,6 +23,42 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException InvalidArgumentException
+     */
+    public function test_reserve_ticket_invalid_folio_should_rise_exception() {
+        $response = new \Guzzle\Http\Message\Response(200);
+        $response->setBody('{"Message":"La solicitud no es válida."}');
+
+        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
+        $plugin->addResponse($response);
+        $guzzuleClient = new GuzzleClient();
+        $guzzuleClient->addSubscriber($plugin);
+
+        $tufesaClient = new Client($guzzuleClient);
+
+        $folio = "JSU";
+        $tufesaClient->reverseTickets($folio);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function test_reserve_ticket_no_folio_should_rise_exception() {
+        $response = new \Guzzle\Http\Message\Response(200);
+        $response->setBody('{"Message":"La solicitud no es válida."}');
+
+        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
+        $plugin->addResponse($response);
+        $guzzuleClient = new GuzzleClient();
+        $guzzuleClient->addSubscriber($plugin);
+
+        $tufesaClient = new Client($guzzuleClient);
+
+        $folio = null;
+        $tufesaClient->reverseTickets($folio);
+    }
+
+    /**
      * @expectedException Tufesa\Service\Exceptions\ResponseException
      */
     public function test_reserve_ticket_should_send_unexisting_request() {
