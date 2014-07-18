@@ -3,10 +3,12 @@
 namespace Tufesa\Service;
 
 use Tufesa\Service\Exceptions\ResponseException;
+use Tufesa\Service\Factory\BuyResponseFactory;
 use Tufesa\Service\Factory\PlaceFactory;
 use Tufesa\Service\Factory\ScheduleFactory;
 use Tufesa\Service\Factory\SeatMapFactory;
 use Guzzle\Http\Client as GuzzleClient;
+use Tufesa\Service\Type\BuyRequest;
 use Tufesa\Service\Type\Places;
 use Tufesa\Service\Type\SeatMap;
 
@@ -97,5 +99,50 @@ class Client
         $rows = $resource["_Response"]["dataField"][0]["_row"];
 
         return SeatMapFactory::create($rows);
+    }
+
+    public function buyTickets(BuyRequest $buyRequest)
+    {
+        $customersXml = "";
+
+        foreach ($buyRequest->getCustomers() as $customer) {
+            $customersXml .= "
+                <customer>
+                    <name>" . $customer->getName() . "</name>
+                    <category>" . $customer->getCategory() . "</category>
+                    <seat>" . $customer->getSeat() . "</seat>
+                </customer>
+            ";
+        }
+
+        $body = "
+            <?xml version=\"1.0\" encoding=\"UTF-8\"?>
+            <BUSDoc version=\"1.0\">
+                <request>
+                    <from>" . $buyRequest->getFrom() . "</from>
+                    <to>" . $buyRequest->getTo() . "</to>
+                    <date>" . $buyRequest->getDate()->format("Ymd") . "</date>
+                    <schedule>" . $buyRequest->getSchedule() . "</schedule>
+                    <folio>" . $buyRequest->getFolio() . "</folio>
+                    <customers>" . $customersXml . "</customers>
+                </request>
+            </BUSDoc>
+        ";
+
+        $headers = [
+            "Content-Type" => "text/xml"
+        ];
+
+        $request = $this->guzzleClient->get("buy", $headers, $body);
+        $response = $request->send();
+        $resource = $response->json();
+
+        if ($resource["_Response"]["resultField"]["_id"] != "00") {
+            throw new ResponseException($resource["_Response"]["resultField"]["_message"]);
+        }
+
+        $tickets = $resource["_Response"]["dataField"][0]["_ticket"];
+
+        return BuyResponseFactory::create($tickets);
     }
 }

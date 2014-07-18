@@ -3,6 +3,8 @@
 namespace Tufesa\Service;
 
 use Guzzle\Http\Client as GuzzleClient;
+use Tufesa\Service\Factory\BuyRequestFactory;
+use Tufesa\Service\Type\BuyRequest;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
@@ -184,5 +186,72 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $seatMap = $tufesaClient->getSeatMap($from, $to, $schedule);
         $this->assertInstanceOf('Tufesa\Service\Type\SeatMap', $seatMap);
+    }
+
+    public function test_buy_a_ticket_with_valid_data_should_work()
+    {
+        $response = new \Guzzle\Http\Message\Response(200);
+        $response->setBody('{"_id":"1.0","_Response":{"_revAuth":null,"resultField":{"_id":"00","_message":"Consulta Exitosa"},"dataField":[{"_line":"     ","_point":null,"_schedules":null,"_row":null,"_total_trans":"1214.00","_auth":"983893574","_ticket":[{"_id":20540673,"_serie":"OXX","_from":"GDL","_vTO":"OBR","_departure_date":"20140720","_departure_time":"09:00","_service":"PLUS","_customer":{"_name":"Marcelo Santos","_category":"C","_seat":8},"_total":"1214.00","_tax":"S","_time_stamp":"201407180914"}]}]},"_Request":null}');
+
+        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
+        $plugin->addResponse($response);
+        $guzzleClient = new GuzzleClient();
+        $guzzleClient->addSubscriber($plugin);
+
+        $tufesaClient = new Client($guzzleClient);
+
+        $requestData = [
+            "from" => "GDL",
+            "to" => "OBR",
+            "date" => "20140720",
+            "schedule" => 123456789,
+            "folio" => 123456789,
+            "customers" => [
+                [
+                    "name" => "Juan Perez",
+                    "category" => "C",
+                    "seat" => 8
+                ]
+            ],
+        ];
+
+        $buyRequest = BuyRequestFactory::create($requestData);
+        $buyResponse = $tufesaClient->buyTickets($buyRequest);
+        $this->assertInstanceOf('Tufesa\Service\Type\BuyResponse', $buyResponse);
+    }
+
+    /**
+     * @expectedException \Tufesa\Service\Exceptions\ResponseException
+     */
+    public function test_buy_a_ticket_with_invalid_data_should_raise_an_exception_work()
+    {
+        $response = new \Guzzle\Http\Message\Response(200);
+        $response->setBody('{"_id": "1.0", "_Response": { "_revAuth": null, "resultField": { "_id": "666", "_message": "SOME DUMMY MESSAGE HERE" }}}');
+
+        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
+        $plugin->addResponse($response);
+        $guzzleClient = new GuzzleClient();
+        $guzzleClient->addSubscriber($plugin);
+
+        $tufesaClient = new Client($guzzleClient);
+
+        $requestData = [
+            "from" => "GDL",
+            "to" => "OBR",
+            "date" => "20140720",
+            "schedule" => 123456789,
+            "folio" => 123456789,
+            "customers" => [
+                [
+                    "name" => "Juan Perez",
+                    "category" => "C",
+                    "seat" => 8
+                ]
+            ],
+        ];
+
+        $buyRequest = BuyRequestFactory::create($requestData);
+        $buyResponse = $tufesaClient->buyTickets($buyRequest);
+        $this->assertInstanceOf('Tufesa\Service\Type\BuyResponse', $buyResponse);
     }
 }
