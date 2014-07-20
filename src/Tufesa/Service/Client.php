@@ -87,6 +87,13 @@ class Client
         return $places;
     }
 
+    /**
+     * @param string    $from
+     * @param string    $to
+     * @param \DateTime $date
+     * @return \Tufesa\Service\Type\Schedules
+     * @throws \Tufesa\Service\Exceptions\ResponseException
+     */
     public function getSchedules($from, $to, \DateTime $date)
     {
         $params = [
@@ -103,7 +110,7 @@ class Client
             throw new ResponseException($resource["_Response"]["resultField"]["_message"]);
         }
 
-        return ScheduleFactory::create($resource["_Response"]["dataField"][0]["_schedules"]);
+        return ScheduleFactory::create($resource["_Response"]["dataField"]);
     }
 
     public function getSeatMap($from, $to, $schedule)

@@ -25,6 +25,11 @@ class Schedule
     protected $service;
 
     /**
+     * @var string
+     */
+    protected $busLine;
+
+    /**
      * @var Category[]
      */
     protected $categories;
@@ -107,5 +112,32 @@ class Schedule
     public function getService()
     {
         return $this->service;
+    }
+
+    /**
+     * @param string $busLine
+     */
+    public function setBusLine($busLine)
+    {
+        $this->busLine = $busLine;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBusLine()
+    {
+        return $this->busLine;
+    }
+
+    public function getCategoryByType($type)
+    {
+        foreach ($this->getCategories() as $category) {
+            if ($category->getId() == $type) {
+                return $category;
+            }
+        }
+
+        throw new \Exception("Seat category not found");
     }
 }

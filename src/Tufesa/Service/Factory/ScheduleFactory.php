@@ -11,12 +11,16 @@ class ScheduleFactory
      * @param array $schedules
      * @return \Tufesa\Service\Type\Schedules
      */
-    public static function create(array $schedules)
+    public static function create(array $data)
     {
         $schedulesCollection = new Schedules();
 
-        foreach ($schedules as $schedule) {
-            $schedulesCollection->append(self::createSchedule($schedule));
+        foreach ($data as $busLineResult) {
+            $busLine = $busLineResult["_line"];
+
+            foreach ($busLineResult["_schedules"] as $schedule) {
+                $schedulesCollection->append(self::createSchedule($schedule, $busLine));
+            }
         }
 
         return $schedulesCollection;
@@ -25,7 +29,7 @@ class ScheduleFactory
     /**
      * @return \Tufesa\Service\Type\Schedule
      */
-    public static function createSchedule(array $schedule)
+    public static function createSchedule(array $schedule, $busLineName)
     {
         self::verifyRequiredFields($schedule);
 
@@ -66,6 +70,7 @@ class ScheduleFactory
         $newSchedule->setDepartureDateTime($departureDateTime);
         $newSchedule->setArrivalDateTime($arrivalDateTime);
         $newSchedule->setService($schedule["_service"]);
+        $newSchedule->setBusLine($busLineName);
 
         $categories = array();
 
