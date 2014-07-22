@@ -22,6 +22,9 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $folio = 829;
         $tufesaClient->reverseTickets($folio);
+
+        $this->assertInstanceOf('Guzzle\Http\Message\Request', $tufesaClient->getLastRequest());
+        $this->assertInstanceOf('Guzzle\Http\Message\Response', $tufesaClient->getLastResponse());
     }
 
     /**
@@ -94,6 +97,8 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $places = $tufesaClient->getDestinations($from);
 
         $this->assertInstanceOf('Tufesa\Service\Type\Places', $places);
+        $this->assertInstanceOf('Guzzle\Http\Message\Request', $tufesaClient->getLastRequest());
+        $this->assertInstanceOf('Guzzle\Http\Message\Response', $tufesaClient->getLastResponse());
     }
 
     public function test_place_factory_should_return_an_instance_of_places() {
@@ -112,6 +117,8 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $places = $tufesaClient->getDestinations($from);
 
         $this->assertInstanceOf('Tufesa\Service\Type\Places', $places);
+        $this->assertInstanceOf('Guzzle\Http\Message\Request', $tufesaClient->getLastRequest());
+        $this->assertInstanceOf('Guzzle\Http\Message\Response', $tufesaClient->getLastResponse());
     }
 
     /**
@@ -149,6 +156,8 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $places = $tufesaClient->getOrigins();
 
         $this->assertTrue(is_array($places));
+        $this->assertInstanceOf('Guzzle\Http\Message\Request', $tufesaClient->getLastRequest());
+        $this->assertInstanceOf('Guzzle\Http\Message\Response', $tufesaClient->getLastResponse());
     }
 
     /**
@@ -186,6 +195,9 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $date = new \DateTime("tomorrow");
 
         $schedules = $tufesaClient->getSchedules($from, $to, $date);
+
+        $this->assertInstanceOf('Guzzle\Http\Message\Request', $tufesaClient->getLastRequest());
+        $this->assertInstanceOf('Guzzle\Http\Message\Response', $tufesaClient->getLastResponse());
 
         foreach ($schedules as $schedule) {
             $this->assertInstanceOf('Tufesa\Service\Type\Schedule', $schedule);
@@ -232,6 +244,8 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $seatMap = $tufesaClient->getSeatMap($from, $to, $schedule);
         $this->assertInstanceOf('Tufesa\Service\Type\SeatMap', $seatMap);
+        $this->assertInstanceOf('Guzzle\Http\Message\Request', $tufesaClient->getLastRequest());
+        $this->assertInstanceOf('Guzzle\Http\Message\Response', $tufesaClient->getLastResponse());
     }
 
     /**
@@ -287,6 +301,8 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $buyRequest = BuyRequestFactory::create($requestData);
         $buyResponse = $tufesaClient->buyTickets($buyRequest);
         $this->assertInstanceOf('Tufesa\Service\Type\BuyResponse', $buyResponse);
+        $this->assertInstanceOf('Guzzle\Http\Message\Request', $tufesaClient->getLastRequest());
+        $this->assertInstanceOf('Guzzle\Http\Message\Response', $tufesaClient->getLastResponse());
     }
 
     /**

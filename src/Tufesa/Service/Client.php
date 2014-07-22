@@ -2,6 +2,8 @@
 
 namespace Tufesa\Service;
 
+use Guzzle\Http\Message\Request;
+use Guzzle\Http\Message\Response;
 use Tufesa\Service\Exceptions\ResponseException;
 use Tufesa\Service\Factory\BuyResponseFactory;
 use Tufesa\Service\Factory\PlaceFactory;
@@ -15,6 +17,16 @@ use Tufesa\Service\Type\SeatMap;
 class Client
 {
     protected $guzzleClient;
+
+    /**
+     * @var \Guzzle\Http\Message\Request
+     */
+    protected $lastRequest;
+
+    /**
+     * @var \Guzzle\Http\Message\Response
+     */
+    protected $lastResponse;
 
     public function __construct(GuzzleClient $client)
     {
@@ -36,15 +48,18 @@ class Client
         ];
 
         $request = $this->guzzleClient->get("reverse?" . http_build_query($params));
+        $this->setLastRequest($request);
+
         $response = $request->send();
+        $this->setLastResponse($response);
+
         $resource = $response->json();
 
-
-        if($resource["_Response"]["resultField"]["_id"] != "00") {
+        if ($resource["_Response"]["resultField"]["_id"] != "00") {
             throw new ResponseException($resource["_Response"]["resultField"]["_message"]);
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     public function getDestinations($from) {
@@ -53,7 +68,10 @@ class Client
         );
 
         $request = $this->guzzleClient->get("destinations?" . http_build_query($params));
+        $this->setLastRequest($request);
+
         $response = $request->send();
+        $this->setLastResponse($response);
         $resource = $response->json();
 
         if($resource["_Response"]["resultField"]["_id"] != "00") {
@@ -71,7 +89,10 @@ class Client
 
     public function getOrigins() {
         $request = $this->guzzleClient->get("origins?");
+        $this->setLastRequest($request);
+
         $response = $request->send();
+        $this->setLastResponse($response);
         $resource = $response->json();
 
         if($resource["_Response"]["resultField"]["_id"] != "00") {
@@ -103,7 +124,10 @@ class Client
         ];
 
         $request = $this->guzzleClient->get("schedules?" . http_build_query($params));
+        $this->setLastRequest($request);
+
         $response = $request->send();
+        $this->setLastResponse($response);
         $resource = $response->json();
 
         if ($resource["_Response"]["resultField"]["_id"] != "00") {
@@ -122,7 +146,10 @@ class Client
         ];
 
         $request = $this->guzzleClient->get("seats?" . http_build_query($params));
+        $this->setLastRequest($request);
+
         $response = $request->send();
+        $this->setLastResponse($response);
         $resource = $response->json();
 
         if ($resource["_Response"]["resultField"]["_id"] != "00") {
@@ -134,40 +161,53 @@ class Client
         return SeatMapFactory::create($rows);
     }
 
+    /**
+     * @param \Tufesa\Service\Type\BuyRequest $buyRequest
+     * @return \Tufesa\Service\Type\BuyResponse
+     * @throws \Tufesa\Service\Exceptions\ResponseException
+     */
     public function buyTickets(BuyRequest $buyRequest)
     {
-        $customersXml = "";
+        $customers = "";
 
         foreach ($buyRequest->getCustomers() as $customer) {
-            $customersXml .= "
-                <customer>
-                    <name>" . $customer->getName() . "</name>
-                    <category>" . $customer->getCategory() . "</category>
-                    <seat>" . $customer->getSeat() . "</seat>
-                </customer>
-            ";
+            $customers .= "<customer><name>" . $customer->getName() . "</name><category>" . $customer->getCategory() . "</category><seat>" . $customer->getSeat() . "</seat></customer>" . PHP_EOL;
         }
 
-        $body = "
-            <?xml version=\"1.0\" encoding=\"UTF-8\"?>
-            <BUSDoc version=\"1.0\">
-                <request>
-                    <from>" . $buyRequest->getFrom() . "</from>
-                    <to>" . $buyRequest->getTo() . "</to>
-                    <date>" . $buyRequest->getDate()->format("Ymd") . "</date>
-                    <schedule>" . $buyRequest->getSchedule() . "</schedule>
-                    <folio>" . $buyRequest->getFolio() . "</folio>
-                    <customers>" . $customersXml . "</customers>
-                </request>
-            </BUSDoc>
-        ";
+        $requestFormat = <<<REQUEST
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSDoc version="1.0">
+    <request>
+        <from>%s</from>
+        <to>%s</to>
+        <date>%s</date>
+        <schedule>%s</schedule>
+        <folio>%s</folio>
+        <customers>%s</customers>
+    </request>
+</BUSDoc>
+REQUEST;
+
+        $body = sprintf(
+            $requestFormat,
+            $buyRequest->getFrom(),
+            $buyRequest->getTo(),
+            $buyRequest->getDate()->format("Ymd"),
+            $buyRequest->getSchedule(),
+            $buyRequest->getFolio(),
+            $customers
+        );
 
         $headers = [
-            "Content-Type" => "text/xml"
+            "Content-Type" => "text/xml",
+            "Accept" => "text/json"
         ];
 
-        $request = $this->guzzleClient->get("buy", $headers, $body);
+        $request = $this->guzzleClient->post("buy", $headers, $body);
+        $this->setLastRequest($request);
+
         $response = $request->send();
+        $this->setLastResponse($response);
         $resource = $response->json();
 
         if ($resource["_Response"]["resultField"]["_id"] != "00") {
@@ -177,5 +217,37 @@ class Client
         $tickets = $resource["_Response"]["dataField"][0]["_ticket"];
 
         return BuyResponseFactory::create($tickets);
+    }
+
+    /**
+     * @param \Guzzle\Http\Message\Response $lastResponse
+     */
+    public function setLastResponse(Response $lastResponse)
+    {
+        $this->lastResponse = $lastResponse;
+    }
+
+    /**
+     * @return \Guzzle\Http\Message\Response
+     */
+    public function getLastResponse()
+    {
+        return $this->lastResponse;
+    }
+
+    /**
+     * @param \Guzzle\Http\Message\Request $lastRequest
+     */
+    public function setLastRequest(Request $lastRequest)
+    {
+        $this->lastRequest = $lastRequest;
+    }
+
+    /**
+     * @return \Guzzle\Http\Message\Request
+     */
+    public function getLastRequest()
+    {
+        return $this->lastRequest;
     }
 }
