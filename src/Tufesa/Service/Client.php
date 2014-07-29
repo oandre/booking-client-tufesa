@@ -33,7 +33,8 @@ class Client
          $this->guzzleClient = $client;
     }
 
-    public function reverseTickets($folio) {
+    public function reverseTickets($folio) 
+    {
 
         if(empty($folio)) {
             throw new \InvalidArgumentException("Folio value is required");
@@ -62,7 +63,8 @@ class Client
         return true;
     }
 
-    public function getDestinations($from) {
+    public function getDestinations($from) 
+    {
         $params = array(
             "from" => $from
         );
@@ -87,7 +89,8 @@ class Client
         return $places;
     }
 
-    public function getOrigins() {
+    public function getOrigins() 
+    {
         $request = $this->guzzleClient->get("origins?");
         $this->setLastRequest($request);
 
